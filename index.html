@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<title>Kothic JS tile test</title>
+	<title>Транслит map</title>
 
 	<script src="test-tile.js" charset="utf-8"></script>
 
@@ -14,19 +14,136 @@
 	<script src="transliteration.js"></script>
 </head>
 <body>
-    <p>A demo of <a href="https://github.com/kothic/kothic-js">Kothic JS</a> map rendering engine.</p>
+<script>	
+function ops ()
+{
+	var type = document.getElementById("orto").value; if (!type) type = 1;
+	var caps = 0;
+	var flav = document.getElementById("flav").value; if (!flav) flav = "O";
+
+	if (type == 1)
+	{	
+		enable ('flav',0); enable ('flav',1); enable ('flav',3); enable ('flav',4); enable ('flav',5); enable ('flav',6); enable ('flav',8); enable ('flav',9);
+		enable ('flav',10); enable ('flav',11); enable ('flav',12); disable ('flav',14); disable ('flav',15); enable ('flav',16); enable ('flav',17); disable ('flav',18);
+	}
+	else if (type == 2)
+	{
+		disable ('flav',0); disable ('flav',9); disable ('flav',10); disable ('flav',11); disable ('flav',12); 
+		disable ('flav',14); disable ('flav',15); disable ('flav',16); disable ('flav',17); disable ('flav',18);
+		if ((flav == "1") || (flav == "2"))		{ flav = "3"; }
+	}
+	else if (type == 5)
+	{
+		enable ('flav',0); enable ('flav',1); enable ('flav',3); enable ('flav',4); enable ('flav',5); enable ('flav',6); enable ('flav',8); enable ('flav',9);
+		enable ('flav',10); enable ('flav',11); disable ('flav',12); enable ('flav',14); enable ('flav',15); disable ('flav',16); disable ('flav',17); enable ('flav',18);
+		if (flav == "1")	{ flav = "2"; }
+	}
+	else if (type == 6)
+	{
+		disable ('flav',0); enable ('flav',1); enable ('flav',3); enable ('flav',4); enable ('flav',5); enable ('flav',6); enable ('flav',8); enable ('flav',9);
+		enable ('flav',10); disable ('flav',11); disable ('flav',12); enable ('flav',14); disable ('flav',15); disable ('flav',16); disable ('flav',17); disable ('flav',18);
+		if (flav == "1")	{ flav = "2"; }
+	}
+	else if (type == 7)
+	{
+		disable ('flav',0); enable ('flav',1); enable ('flav',3); enable ('flav',4); enable ('flav',5); enable ('flav',6); enable ('flav',8); enable ('flav',9);
+		enable ('flav',10); disable ('flav',11); disable ('flav',12); disable ('flav',14); enable ('flav',15); disable ('flav',16); disable ('flav',17); disable ('flav',18);
+		if (flav == "1")	{ flav = "2"; }
+	}
+	else if (type > 10)
+	{	
+		enable ('flav',0); enable ('flav',1); enable ('flav',3); enable ('flav',4); enable ('flav',5); enable ('flav',6); enable ('flav',8); enable ('flav',9);
+		enable ('flav',10); disable ('flav',11); disable ('flav',12); disable ('flav',14); disable ('flav',15); disable ('flav',16); disable ('flav',17); disable ('flav',18);
+	}
+
+}
+
+function disable (id, option)
+{
+	document.getElementById(id).options[option].disabled = true; 
+}
+
+function enable (id, option)
+{
+	document.getElementById(id).options[option].disabled = false; 
+}
+
+function redraw()
+{
+	var type, flav;
+	if (!type) { type = document.getElementById("orto").value; if (!type) type = 1; }
+	if (!flav) { flav = document.getElementById("flav").value; if (!flav) flav = "2"; }
+	MapCSS.invalidateCache();
+	transliterateFeatures(tile_data, type, flav);
+	console.log(tile_data.features[61]['properties']);
+	Kothic.render('map', tile_data, tile_zoom, {
+		styles: ['osmosnimki'],
+		locales: ['t' + type + '_' + flav]
+	});
+}
+
+</script>
+
+	<h1>Транслит map</h1>
+
+	<b>Orthography:<br>Pravopis:<br>Правопис:</b>
+	<select id="orto" onchange="ops ()" style="margin:10px;">
+	  <option value="1">Latinica</option>
+	  <option value="5">Kirilica</option>
+	  <option value="6">Kirilica (russka)</option>
+	  <option value="7">Kirilica (ukrajinska)</option>
+	  <option value="2">ASCII</option>
+	  <option value="10">IPA</option>
+	  <option disabled>--------------------------</option>
+	  <option value="11">Albanski</option>
+	  <option value="12">Armenski</option>
+	  <option value="18">Devanagari</option>
+	  <option value="17">Etiopski</option>
+	  <option value="14">Grečski</option>
+	  <option value="13">Gruzinski</option>
+	  <option value="16">Latvijski</option>
+	  <option value="15">Vųgorski</option>
+	</select>
+	<br><b>Flavorisation:<br>Flavorizacija:<br>Флаворизација:</b><br>
+	<select id="flav" onchange="ops ()" style="margin:10px;">
+	  <option value="2">MS Plus</option>
+	  <option value="3">Medžuslovjanski</option>
+	  <option disabled>--------------------------</option>
+	  <option value="VZ">Sěverny variant</option>
+	  <option value="J">Južny variant</option>
+	  <option value="V">Vzhodny variant</option>
+	  <option value="Z">Zapadny variant</option>
+	  <option disabled>--------------------------</option>
+	  <option value="I">Slovianski</option>
+	  <option value="N">Novosloviensky</option>
+	  <option value="4">Slovianto</option>
+	  <option value="MZ">/Majar-Ziljski</option>
+	  <option value="PI">/Pilát</option>
+	  <option disabled>--------------------------</option>
+	  <option value="R">Russki</option>
+	  <option value="U">Ukrajinski</option>
+	  <option value="P">Poľski</option>
+	  <option value="S">Slovenski</option>
+	  <option value="C">Sŕbski</option>
+	</select>
+	
+	<button onclick="redraw()">Redraw map!</button>
+	
+	
+
+    <p>Based on Jan van Steenbergen's <a href="http://steen.free.fr/interslavic/transliterator_extended.html">Interslavic transliterator</a> and demo of <a href="https://github.com/kothic/kothic-js">Kothic JS</a> map rendering engine.</p>
 
     <canvas id="map" width="1024" height="1024"></canvas>
 
 	<script type="text/javascript">
 
         invertYAxe(tile_data);
-	transliterateFeatures(tile_data);
+	transliterateFeatures(tile_data, 2, '2');
 
         MapCSS.onImagesLoad = function () {
             Kothic.render('map', tile_data, tile_zoom, {
                 styles: ['osmosnimki'],
-		locales: ['tx']
+		locales: ['t2_2']
             });
         };
         MapCSS.preloadSpriteImage("osmosnimki", "osmosnimki.png");
@@ -65,12 +182,12 @@
             }
         }
 	
-	function transliterateFeatures(data) {
+	function transliterateFeatures(data, type, flav) {
 		var type, coordinates, tileSize = data.granularity, i, j, k, l, feature;
 		for (i = 0; i < data.features.length; i++) {
 			feature = data.features[i];
 			if (feature.properties && feature.properties.name && feature.properties.name.replace) {
-				feature.properties['name:tx'] = transliterate(feature.properties.name, 1, '2', 0);
+				feature.properties['name:t' + type + '_' + flav] = transliterate(feature.properties.name, type, flav, 0);
 			}
 		}
 	}
