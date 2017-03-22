@@ -10,6 +10,8 @@
 
 	<!-- osmosnimki.ru style (Generated from MapCSS) -->
 	<script src="osmosnimki.js"></script>
+	<!-- Jan van Steenbergen transliteration library -->
+	<script src="transliteration.js"></script>
 </head>
 <body>
     <p>A demo of <a href="https://github.com/kothic/kothic-js">Kothic JS</a> map rendering engine.</p>
@@ -19,10 +21,12 @@
 	<script type="text/javascript">
 
         invertYAxe(tile_data);
+	transliterateFeatures(tile_data);
 
         MapCSS.onImagesLoad = function () {
             Kothic.render('map', tile_data, tile_zoom, {
-                styles: ['osmosnimki']
+                styles: ['osmosnimki'],
+		locales: ['tx']
             });
         };
         MapCSS.preloadSpriteImage("osmosnimki", "osmosnimki.png");
@@ -60,6 +64,18 @@
                 }
             }
         }
+	
+	function transliterateFeatures(data) {
+		var type, coordinates, tileSize = data.granularity, i, j, k, l, feature;
+		for (i = 0; i < data.features.length; i++) {
+			feature = data.features[i];
+			if (feature.properties && feature.properties.name && feature.properties.name.replace) {
+				feature.properties['name:tx'] = transliterate(feature.properties.name, 1, '2', 0);
+			}
+		}
+	}
+	
+	
 	</script>
 </body>
 </html>
