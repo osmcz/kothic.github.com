@@ -76,6 +76,8 @@ function redraw()
 	MapCSS.invalidateCache();
 	transliterateFeatures(tile_data, type, flav);
 	console.log(tile_data.features[61]['properties']);
+	document.getElementById('map').width=1024;
+	document.getElementById('map').height=1024;
 	Kothic.render('map', tile_data, tile_zoom, {
 		styles: ['osmosnimki'],
 		locales: ['t' + type + '_' + flav]
